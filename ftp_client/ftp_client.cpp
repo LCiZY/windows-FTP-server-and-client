@@ -17,6 +17,7 @@ void openDataPipe_revFile(const char* filename);
 void openDataPipe_sendFile(const char* filename);
 
 const int BUFSIZE = 1024;
+string Serveripstr = "";  //ftp 服务器ip地址
 
 int main()
 {
@@ -41,20 +42,22 @@ int main()
 		sockaddr_in serAddr;
 		serAddr.sin_family = AF_INET;
 		serAddr.sin_port = htons(21);
-		string serveripstr = "127.0.0.1";  //ftp 服务器ip地址
+		
+		cout << "please input server ip:"; cin >> Serveripstr;
 		//serAddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");  //这句是旧的，vs2013版本之前用的函数
-		inet_pton(AF_INET, serveripstr.c_str(), &serAddr.sin_addr.s_addr);   //这是新的ip地址转换函数
+		inet_pton(AF_INET, Serveripstr.c_str(), &serAddr.sin_addr.s_addr);   //这是新的ip地址转换函数
 		if (connect(sclient, (sockaddr *)&serAddr, sizeof(serAddr)) == SOCKET_ERROR)
 		{
 			//连接失败 
 			cout << "connect error !" << endl;
 			closesocket(sclient);
+			system("pause");
 			return 0;
 		}
 
 		string indata;
 		while (true) {
-			cout << "ftp:" + serveripstr + ">";
+			cout << "ftp:" + Serveripstr + ">";
 			char linedata[65];
 			cin.getline(linedata, 65);  
 			indata = linedata; UPPERCMD(indata);   if (indata.compare("CLEAR") == 0) { system("cls"); continue; }
@@ -131,7 +134,7 @@ void openDataPipe_revFile(const char* filename) {
 	sockaddr_in serAddr;
 	serAddr.sin_family = AF_INET;
 	serAddr.sin_port = htons(20);
-	string serveripstr = "127.0.0.1";  //ftp 服务器ip地址
+	string serveripstr = Serveripstr;  //ftp 服务器ip地址
 	//serAddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");  //这句是旧的，vs2013版本之前用的函数
 	inet_pton(AF_INET, serveripstr.c_str(), &serAddr.sin_addr.s_addr);   //这是新的ip地址转换函数
 	if (connect(sclient, (sockaddr *)&serAddr, sizeof(serAddr)) == SOCKET_ERROR)
@@ -178,7 +181,7 @@ void openDataPipe_sendFile(const char* filename) {
 	sockaddr_in serAddr;
 	serAddr.sin_family = AF_INET;
 	serAddr.sin_port = htons(20);
-	string serveripstr = "127.0.0.1";  //ftp 服务器ip地址
+	string serveripstr = Serveripstr;  //ftp 服务器ip地址
 	//serAddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");  //这句是旧的，vs2013版本之前用的函数
 	inet_pton(AF_INET, serveripstr.c_str(), &serAddr.sin_addr.s_addr);   //这是新的ip地址转换函数
 	if (connect(sclient, (sockaddr *)&serAddr, sizeof(serAddr)) == SOCKET_ERROR)
